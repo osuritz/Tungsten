@@ -5,12 +5,20 @@
     ViewBag.Title = "Browse";
 }
 
-<h2>Browse</h2>
+<h2>iOS</h2>
 
-<ul id="app-list">
-@foreach (App app in Model) {
+@if (Model.Count == 0)
+{
+<div>There are no iOS apps yet.</div>
+}
+else
+{
+<ul clas="app-list ios">
+@foreach (App app in Model)
+{
     <li>
         <a href="@app.GetDownloadManifestUri(this.Url)">@(app.Name + " " + app.ShortVersion)</a>
     </li>
 }
-</ul>
+</ul>    
+}

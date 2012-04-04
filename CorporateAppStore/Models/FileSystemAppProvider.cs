@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.IO;
 using Ionic.Zip;
-using System.Xml;
-using CorporateAppStore.Helpers.CoreFoundation;
 using PList;
 
 namespace CorporateAppStore.Models
 {
+    /// <summary>
+    /// A <see cref="IAppProvider"/> that looks for apps on the file system.
+    /// </summary>
     public class FileSystemAppProvider : IAppProvider
     {
         public const string DefaultPackageDirectory = "~/apps/";
@@ -43,17 +42,9 @@ namespace CorporateAppStore.Models
         public string AppDirectory { get; private set; }
         
         public AppCollection GetAllApps()
-        {
-            AppCollection apps = new AppCollection();
-
+        {            
             string[] allApps = Directory.GetFiles(this.AppDirectory, "*.ipa");
-
-            foreach (var appPath in allApps)
-            {
-                App app = LoadAppInfo(appPath);
-                apps.Add(app);
-            }
-
+            var apps = new AppCollection(allApps.Select(LoadAppInfo).ToList());
             return apps;
         }
 
@@ -81,9 +72,6 @@ namespace CorporateAppStore.Models
             app.Filepath = Path.Combine(DefaultPackageDirectory, appRelativePath.OriginalString);
             app.ManifestFilepath = Path.ChangeExtension(app.Filepath, App.ManifestFileExtension);
             
-            // TODO: Fix this to show the actual name
-            app.Name = Path.GetFileNameWithoutExtension(appPath);
-
             LoadAppMetaData(appPath, app);
 
             return app;
@@ -93,10 +81,13 @@ namespace CorporateAppStore.Models
         {
             using (ZipFile zip = ZipFile.Read(appPath))
             {
-                //ZipEntry appRootFolder = zip.Entries.FirstOrDefault(x => x.IsDirectory && x.FileName.EndsWith(".app"));
-
-                ZipEntry payload = zip["Payload/"];
+                ////ZipEntry payload = zip["Payload/"];
                 ZipEntry appRootFolder = zip.Entries.Skip(1).FirstOrDefault();
+
+                if (appRootFolder == null)
+                {
+                    throw new InvalidOperationException("Expected .ipa file to contain an app folder under Payload/");
+                }
 
                 // Read Info.plist
                 ZipEntry appInfo = zip[appRootFolder.FileName + "Info.plist"];
@@ -104,20 +95,17 @@ namespace CorporateAppStore.Models
                 //string infoXml;
                 ////CFPropertyList infoPlist;
                 PList.PListRoot infoPlist;
-                using (MemoryStream ms = new MemoryStream())
+                using (var memoryStream = new MemoryStream())
                 {
-                    appInfo.Extract(ms);
+                    appInfo.Extract(memoryStream);
 
                     // Rewind memory stream to the beginning.
-                    ms.Seek(0, SeekOrigin.Begin);
-                    using (StreamReader reader = new StreamReader(ms))
+                    memoryStream.Seek(0, SeekOrigin.Begin);
+                    using (var reader = new StreamReader(memoryStream))
                     {
-                        LoadMetaDataFromPlist(app, PList.PListRoot.Load(ms));                        
-                        //infoPlist = new CFPropertyList(data: reader.ReadToEnd());
+                        LoadMetaDataFromPlist(app, PList.PListRoot.Load(memoryStream));                        
                     }
                 }
-
-                //ZipEntry appRootFolder = zip.Entries.FirstOrDefault(x => x.IsDirectory);
             }
         }
 

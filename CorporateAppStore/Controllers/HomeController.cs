@@ -30,7 +30,7 @@ namespace CorporateAppStore.Controllers
             string siteName = "Coporate App Store";            
             ViewBag.Message = string.Format("Welcome to the {0}!", siteName);
 
-            return View();
+            return this.RedirectToAction("Browse");
         }
 
         public ActionResult Browse()
