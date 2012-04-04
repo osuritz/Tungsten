@@ -1,0 +1,16 @@
+﻿@model CorporateAppStore.Models.AppCollection
+@using CorporateAppStore.Models
+
+@{
+    ViewBag.Title = "Browse";
+}
+
+<h2>Browse</h2>
+
+<ul id="app-list">
+@foreach (App app in Model) {
+    <li>
+        <a href="@app.GetDownloadManifestUri(this.Url)">@(app.Name + " " + app.ShortVersion)</a>
+    </li>
+}
+</ul>
