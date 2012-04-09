@@ -3,10 +3,23 @@
 
 @{
     ViewBag.Title = "Browse";
+    Layout = "~/Views/Shared/_RightAccessoryColumnLayout.cshtml";
+}
+
+@section RightContent {
+    <section>
+    <h3>Quick Links</h3>
+    <ul>
+        <li><a href="#">Quick Link #1</a></li>
+        <li><a href="#">Quick Link #2</a></li>
+        <li><a href="#">Quick Link #3</a></li>
+        <li><a href="#">Quick Link #4</a></li>
+        <li><a href="#">Quick Link #5</a></li>
+    </ul>
+    </section>
 }
 
 <h2>iOS</h2>
-
 @if (Model.Count == 0)
 {
 <div>There are no iOS apps yet.</div>
