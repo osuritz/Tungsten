@@ -53,14 +53,103 @@
 //@import "lib/utilities.less"; // Has to be last to override when necessary
 
 
+// CUSTOM STYLES
+// -------------
+
+body {
+	position: relative;
+	background-color: #fff;
+	background-image: url(../images/grid-18px-masked.png);
+	background-repeat: repeat-x;
+}
+
+.jumbotron {
+	position: relative;
+
+	h1 {
+		margin-bottom: 9px;
+		font-size: 72px;
+		font-weight: bold;
+		font-weight: bold;
+		letter-spacing: -1px;
+		line-height: 1;
+	}
+
+	p {
+		margin-bottom: 18px;
+		font-weight: 300;
+	}
+
+}
+
+.masthead {
+	
+	padding-top: 36px;
+	margin-bottom: 36px;
+
+	h1, p {
+		text-align: center;
+	}
+
+	h1 {
+		margin-bottom: 18px;
+	}
+
+	p {
+		margin-left: 5%;
+		margin-right: 5%;
+		font-size: 30px;
+		line-height: 36px;
+	}
+}
+
+// APP LIST
+// -------------
+.app-group {
+	border: 1px solid #E1E1E8;
+	.border-radius(8px);
+	padding: 7px 13px 0 13px;
+}
+
 ul.app-list {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
+	margin-left: -13px;
 
 	& > li {
-		margin: 0;
-		padding: 0;
-		float: left;
+		margin-left: 8px;
+
+		.app-summary {
+			display: block;
+			/*padding: 4px;
+			border: 1px solid #DDD;*/
+		}
+
+	}
+}
+
+.app-list
+{
+	.app-summary {
+		display: block;
+
+		img {
+			display: block;
+			margin-bottom: .6em;
+		}
+
+		.version {
+			display: block;
+		}
+
+
+		&.alt {
+			img {
+				float: left;
+				margin-right: .6em;
+			}
+
+			.version {
+				display: block;
+			}
+		}
 	}
 }

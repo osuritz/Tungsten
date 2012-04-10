@@ -1,0 +1,7 @@
+﻿@model CorporateAppStore.Models.App
+
+<div class="app-summary alt">
+    <img src="http://placehold.it/72x72" alt="@Model.Name" />
+    <a href="@Model.GetDownloadManifestUri(this.Url)">@Model.Name</a>
+    <span class="version">Version @Model.ShortVersion</span>
+</div>            

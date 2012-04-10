@@ -1,0 +1,13 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div id="leftColumn" class="span3">
+        @RenderSection("RightContent", required: false)
+    </div>
+
+    <div id="content" class="span9">
+        @RenderBody()
+    </div>
+</div>

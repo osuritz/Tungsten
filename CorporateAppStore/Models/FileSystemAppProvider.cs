@@ -115,8 +115,8 @@ namespace CorporateAppStore.Models
 
 
             app.Name = root.Read("CFBundleDisplayName");
-            app.ShortVersion = root.Read("CFBundleShortVersionString");
             app.Version = root.Read("CFBundleVersion");
+            app.ShortVersion = root.ContainsKey("CFBundleShortVersionString") ? root.Read("CFBundleShortVersionString") : app.Version;
         }        
     }
 
