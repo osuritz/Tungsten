@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using CorporateAppStore
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -21,6 +22,7 @@
             @RenderBody()
         </section>
         <footer>
+            Copyright © @DateTime.Now.Year @Branding.CurrentBrand.CompanyName. All rights reserved.
         </footer>
     </div>
 </body>

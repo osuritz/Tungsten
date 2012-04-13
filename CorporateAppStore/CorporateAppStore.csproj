@@ -73,7 +73,12 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\ImageHelper.cs" />
+    <Compile Include="Helpers\MimeTypes.cs" />
     <Compile Include="Models\App.cs" />
+    <Compile Include="Branding.cs" />
+    <Compile Include="Models\AppFactory.cs" />
+    <Compile Include="Models\AppIcon.cs" />
     <Compile Include="Models\FileSystemAppProvider.cs" />
     <Compile Include="Models\IAppProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

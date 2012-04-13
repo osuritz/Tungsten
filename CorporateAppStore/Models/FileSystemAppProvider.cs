@@ -3,6 +3,7 @@ using System.Linq;
 using System.IO;
 using Ionic.Zip;
 using PList;
+using System.Collections.Generic;
 
 namespace CorporateAppStore.Models
 {
@@ -50,8 +51,6 @@ namespace CorporateAppStore.Models
 
         private App LoadAppInfo(string appPath)
         {
-            var app = new App();
-
             string appDir;
             if (this.AppDirectory.EndsWith("/") || this.AppDirectory.EndsWith("\\"))
             {
@@ -65,14 +64,18 @@ namespace CorporateAppStore.Models
             Uri localAppBase = new Uri(appDir);
             Uri appUri = new Uri(appPath);
             Uri appRelativePath = localAppBase.MakeRelativeUri(appUri);
-            
-            app.Filename = Path.GetFileName(appPath);
-            app.ManifestFilename = Path.ChangeExtension(app.Filename, App.ManifestFileExtension);
+
+
+            AppFactory factory = new AppFactory();
+            var app = factory.Create(appPath);
 
             app.Filepath = Path.Combine(DefaultPackageDirectory, appRelativePath.OriginalString);
-            app.ManifestFilepath = Path.ChangeExtension(app.Filepath, App.ManifestFileExtension);
-            
-            LoadAppMetaData(appPath, app);
+
+            if (app is IOSApp)
+            {
+                app.ManifestFilepath = Path.ChangeExtension(app.Filepath, IOSApp.ManifestFileExtension);
+                LoadAppMetaData(appPath, app);
+            }                        
 
             return app;
         }
@@ -81,8 +84,8 @@ namespace CorporateAppStore.Models
         {
             using (ZipFile zip = ZipFile.Read(appPath))
             {
-                ////ZipEntry payload = zip["Payload/"];
                 ZipEntry appRootFolder = zip.Entries.Skip(1).FirstOrDefault();
+                string appRootFolderName = appRootFolder.FileName;
 
                 if (appRootFolder == null)
                 {
@@ -90,11 +93,8 @@ namespace CorporateAppStore.Models
                 }
 
                 // Read Info.plist
-                ZipEntry appInfo = zip[appRootFolder.FileName + "Info.plist"];
+                ZipEntry appInfo = zip[appRootFolderName + "Info.plist"];
 
-                //string infoXml;
-                ////CFPropertyList infoPlist;
-                PList.PListRoot infoPlist;
                 using (var memoryStream = new MemoryStream())
                 {
                     appInfo.Extract(memoryStream);
@@ -106,6 +106,29 @@ namespace CorporateAppStore.Models
                         LoadMetaDataFromPlist(app, PList.PListRoot.Load(memoryStream));                        
                     }
                 }
+
+                // Load icon data files from zip file based filenames listed in plist
+                List<AppIcon> iconList = new List<AppIcon>();
+                if (app.IconFiles != null)
+                {
+                    foreach (string iconFilename in app.IconFiles)
+                    {
+                        ZipEntry zippedIcon = zip[appRootFolderName + iconFilename];
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            zippedIcon.Extract(memoryStream);
+
+                            // Rewind memory stream to the beginning.
+                            memoryStream.Seek(0, SeekOrigin.Begin);
+                            iconList.Add(new AppIcon
+                            {
+                                Filename = iconFilename,
+                                Data = memoryStream.ToArray()
+                            });
+                        }
+                    }
+                }
+                app.Icons = iconList.ToArray();
             }
         }
 
@@ -113,11 +136,44 @@ namespace CorporateAppStore.Models
         {
             var root = infoPlist.Root as PListDict;
 
-
             app.Name = root.Read("CFBundleDisplayName");
             app.Version = root.Read("CFBundleVersion");
             app.ShortVersion = root.ContainsKey("CFBundleShortVersionString") ? root.Read("CFBundleShortVersionString") : app.Version;
-        }        
+            
+            PListArray arr = root.ReadSafe<PListArray>("CFBundleIconFiles");
+            if (arr == null)
+            {
+                app.IconFiles = new[] { "Icon.png" };
+            }
+            else
+            {
+                List<string> icons = new List<string>();
+                foreach (IPListElement item in arr)
+                {
+                    // Assume item is a string or discard.
+                    PListString str = item as PListString;
+
+                    if (str != null)
+                    {
+                        icons.Add(str.Value);
+                    }
+                }
+
+                app.IconFiles = icons.ToArray();
+            }
+        }
+
+
+
+        public App GetAppByFilename(string filename)
+        {
+            if (string.IsNullOrWhiteSpace(filename)) {
+                throw new ArgumentNullException("filename", "Filename cannot be null or empty.");
+            }
+            
+            App app = this.GetAllApps().FirstOrDefault(x => string.Equals(filename, x.Filename, StringComparison.OrdinalIgnoreCase));
+            return app;
+        }
     }
 
     public static class PListExtensions
@@ -127,6 +183,16 @@ namespace CorporateAppStore.Models
             return element[key] as TResult;
         }
 
+        public static TResult ReadSafe<TResult>(this PListDict element, string key, TResult defaultValue = null) where TResult : class, IPListElement
+        {
+            if (element.ContainsKey(key)) {
+                return element[key] as TResult;
+            }
+            
+            return defaultValue;
+        }
+
+        
         public static string Read(this PListDict element, string key)
         {
             return Read<PListString>(element, key).Value;

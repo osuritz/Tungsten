@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using CorporateAppStore.Models;
+using CorporateAppStore.Helpers;
 
 namespace CorporateAppStore.Controllers
 {
@@ -38,6 +39,34 @@ namespace CorporateAppStore.Controllers
             AppCollection allApps = this.AppProvider.GetAllApps();
             
             return View(allApps);
-        }        
+        }
+
+        [ActionName("AppIcon")]
+        public ActionResult GetAppIcon(string id, string version)
+        {
+            App app = this.AppProvider.GetAppByFilename(id);
+
+            if (app == null)
+            {
+                return this.HttpNotFound();
+            }
+
+            if (app.Icons == null)
+            {
+                // TODO: Return a default icon.
+                return this.HttpNotFound();
+            }
+
+            AppIcon icon = app.Icons.FirstOrDefault();
+            if (icon == null)
+            {
+                // TODO: Return a default icon.
+                return this.HttpNotFound();
+            }
+
+            var png = new PngFile(icon.Data);
+
+            return this.File(icon.Data, MimeTypes.GetMimeType(icon.Filename));
+        }
     }
 }
