@@ -1,0 +1,761 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>PNGNormalizer</name>
+    </assembly>
+    <members>
+        <member name="T:PNGNormalizer.Crc32">
+            <summary>
+            Provides facilities for computing the cyclic redundancy checksum polynomial of 32-bit length (CRC32).
+            </summary>
+        </member>
+        <member name="F:PNGNormalizer.Crc32.DefaultSeed">
+            <summary>
+            The default CRC32 seed.
+            </summary>
+        </member>
+        <member name="M:PNGNormalizer.Crc32.#ctor(System.UInt32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:PNGNormalizer.Crc32"/> class.
+            </summary>
+            <param name="seed">The seed.</param>
+        </member>
+        <member name="M:PNGNormalizer.Crc32.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:PNGNormalizer.Crc32"/> class.
+            </summary>
+        </member>
+        <member name="M:PNGNormalizer.Crc32.Initialize">
+            <summary>
+            Initializes an implementation of the <see cref="T:System.Security.Cryptography.HashAlgorithm"/> class.
+            </summary>
+        </member>
+        <member name="M:PNGNormalizer.Crc32.HashCore(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Core implementation of the CRC32 hash algorithm.
+            </summary>
+            <param name="buffer">The buffer.</param>
+            <param name="start">The start.</param>
+            <param name="length">The length.</param>
+        </member>
+        <member name="M:PNGNormalizer.Crc32.HashFinal">
+            <summary>
+            When overridden in a derived class, finalizes the hash computation after the last data is processed by the cryptographic stream object.
+            </summary>
+            <returns>
+            The computed hash code.
+            </returns>
+        </member>
+        <member name="M:PNGNormalizer.Crc32.ComputeCrc32(System.Byte[],System.UInt32)">
+            <summary>
+            Computes the cyclic redundancy checksum polynomial of 32-bit length (CRC32) of the specified data.
+            </summary>
+            <param name="data">The data.</param>
+            <param name="seed">The seed.</param>
+            <returns></returns>
+        </member>
+        <member name="P:PNGNormalizer.Crc32.CrcValue">
+            <summary>
+            The computed cyclic redundancy checksum.
+            </summary>
+        </member>
+        <member name="P:PNGNormalizer.Crc32.HashSize">
+            <summary>
+            Gets the size, in bits, of the computed hash code.
+            </summary>
+            <returns>The size, in bits, of the computed hash code.</returns>
+        </member>
+        <member name="T:PNGNormalizer.PngFile">
+            <summary>
+            Reads PNG image files, including Apple-optimized, crushed PNG files used on iOS devies.
+            </summary>
+        </member>
+        <member name="M:PNGNormalizer.PngFile.#ctor(System.Byte[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:PNGNormalizer.PngFile"/> class.
+            </summary>
+            <param name="data">The PNG data.</param>
+        </member>
+        <member name="M:PNGNormalizer.PngFile.Compress(System.Byte[],Ionic.Zlib.CompressionLevel)">
+            <summary>
+            Compresses the specified data.
+            </summary>
+            <param name="data">The data.</param>
+            <param name="compressionLevel">The compression level.</param>
+            <returns></returns>
+        </member>
+        <member name="P:PNGNormalizer.PngFile.Data">
+            <summary>
+            Gets or sets the normalized data.
+            </summary>
+            <value>
+            The data.
+            </value>
+        </member>
+        <member name="P:PNGNormalizer.PngFile.IsIphoneCrushed">
+            <summary>
+            Gets a value indicating whether the original data is iOS (iPhone/iPad/etc.) crushed (CgBI).
+            </summary>
+            <value>
+            	<c>true</c> if the original data is iOS crushed; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:PNGNormalizer.PngFile.Width">
+            <summary>
+            Gets the image width.
+            </summary>
+        </member>
+        <member name="P:PNGNormalizer.PngFile.Height">
+            <summary>
+            Gets the image height.
+            </summary>
+        </member>
+        <member name="T:PNGNormalizer.PngFile.PngChunkHeader">
+            <summary>
+            A PNG chunk header is made of 8 bytes. The first 4 indicate the length of the chunk data.
+            The last 4 indicate the chunk type.
+            </summary>
+        </member>
+        <member name="M:PNGNormalizer.PngFile.PngChunkHeader.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Initializes a new instance of the <see cref="T:PNGNormalizer.PngFile.PngChunkHeader"/> class.
+            </summary>
+            <param name="reader">The reader.</param>
+        </member>
+        <member name="P:PNGNormalizer.PngFile.PngChunkHeader.ChunkType">
+            <summary>
+            Gets the chunk type.
+            </summary>
+            <value>
+            The type of the chunk.
+            </value>
+        </member>
+        <member name="T:PNGNormalizer.PngFile.PngChunk">
+            <summary>
+            A PNG chunk is made of a chunk header (8 bytes), its data, and a CRC.
+            </summary>
+        </member>
+        <member name="M:PNGNormalizer.PngFile.PngChunk.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Initializes a new instance of the <see cref="T:PNGNormalizer.PngFile.PngChunk"/> class.
+            </summary>
+            <param name="reader">The reader.</param>
+        </member>
+        <member name="M:PNGNormalizer.PngFile.PngChunk.WriteTo(PNGNormalizer.EndianBinaryWriter)">
+            <summary>
+            Writes the chunk to the specified <see cref="T:System.IO.BinaryWriter"/>.
+            </summary>
+            <param name="writer">The writer.</param>
+        </member>
+        <member name="M:PNGNormalizer.PngFile.PngChunk.RecomputeCrc">
+            <summary>
+            Recomputes the Cyclyic Redundancy Check (CRC) for the current chunk.
+            </summary>
+        </member>
+        <member name="T:PNGNormalizer.Endianness">
+            <summary>
+            Represents the byte order.
+            </summary>
+        </member>
+        <member name="F:PNGNormalizer.Endianness.LittleEndian">
+            <summary>
+            Little-endian. Least significant byte first.
+            </summary>
+        </member>
+        <member name="F:PNGNormalizer.Endianness.BigEndian">
+            <summary>
+            Big-endian. Most significant byte first.
+            </summary>
+        </member>
+        <member name="T:PNGNormalizer.EndianBinaryWriter">
+            <summary>
+            Similar to <see cref="T:System.IO.BinaryWriter"/> but with the ability to specify the <see cref="T:PNGNormalizer.Endianness"/>.
+            </summary>
+        </member>
+        <member name="F:PNGNormalizer.EndianBinaryWriter._buffer">
+            <summary>
+            Buffer used for temporary storage during conversion from primitives
+            </summary>
+        </member>
+        <member name="M:PNGNormalizer.EndianBinaryWriter.#ctor(System.IO.Stream,PNGNormalizer.EndianBitConverter)">
+            <summary>
+            Initializes a new instance of the <see cref="T:PNGNormalizer.EndianBinaryWriter"/> class.
+            </summary>
+            <param name="output">The output.</param>
+            <param name="bitConverter">The bit converter.</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBinaryWriter.Close">
+            <summary>
+            Closes the writer, including the udnerlying stream.
+            </summary>
+        </member>
+        <member name="M:PNGNormalizer.EndianBinaryWriter.Flush">
+            <summary>
+            Clears all buffers for the current writer and causes any buffered data to
+            be written to the underlying device.
+            </summary>
+        </member>
+        <member name="M:PNGNormalizer.EndianBinaryWriter.Seek(System.Int64,System.IO.SeekOrigin)">
+            <summary>
+            Sets the position within the current stream.
+            </summary>
+            <param name="offset">A byte offset relative to the <paramref name="origin"/> parameter.</param>
+            <param name="origin">A value of type <see cref="T:System.IO.SeekOrigin"/> indicating the reference point used to obtain the new position.</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBinaryWriter.Write(System.Boolean)">
+            <summary>
+            Writes a boolean value to the stream. 1 byte is written.
+            </summary>
+            <param name="value">The value to write</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBinaryWriter.Write(System.Int16)">
+            <summary>
+            Writes a 16-bit signed integer to the stream, using the bit converter
+            for this writer. 2 bytes are written.
+            </summary>
+            <param name="value">The value to write</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBinaryWriter.Write(System.Int32)">
+            <summary>
+            Writes a 32-bit signed integer to the stream, using the bit converter
+            for this writer. 4 bytes are written.
+            </summary>
+            <param name="value">The value to write</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBinaryWriter.Write(System.Int64)">
+            <summary>
+            Writes a 64-bit signed integer to the stream, using the bit converter
+            for this writer. 8 bytes are written.
+            </summary>
+            <param name="value">The value to write</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBinaryWriter.Write(System.UInt16)">
+            <summary>
+            Writes a 16-bit unsigned integer to the stream, using the bit converter
+            for this writer. 2 bytes are written.
+            </summary>
+            <param name="value">The value to write</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBinaryWriter.Write(System.UInt32)">
+            <summary>
+            Writes a 32-bit unsigned integer to the stream, using the bit converter
+            for this writer. 4 bytes are written.
+            </summary>
+            <param name="value">The value to write</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBinaryWriter.Write(System.UInt64)">
+            <summary>
+            Writes a 64-bit unsigned integer to the stream, using the bit converter
+            for this writer. 8 bytes are written.
+            </summary>
+            <param name="value">The value to write</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBinaryWriter.Write(System.Single)">
+            <summary>
+            Writes a single-precision floating-point value to the stream, using the bit converter
+            for this writer. 4 bytes are written.
+            </summary>
+            <param name="value">The value to write</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBinaryWriter.Write(System.Double)">
+            <summary>
+            Writes a double-precision floating-point value to the stream, using the bit converter
+            for this writer. 8 bytes are written.
+            </summary>
+            <param name="value">The value to write</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBinaryWriter.Write(System.Decimal)">
+            <summary>
+            Writes a decimal value to the stream, using the bit converter for this writer.
+            16 bytes are written.
+            </summary>
+            <param name="value">The value to write</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBinaryWriter.Write(System.Byte)">
+            <summary>
+            Writes a signed byte to the stream.
+            </summary>
+            <param name="value">The value to write</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBinaryWriter.Write(System.SByte)">
+            <summary>
+            Writes an unsigned byte to the stream.
+            </summary>
+            <param name="value">The value to write</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBinaryWriter.Write(System.Byte[])">
+            <summary>
+            Writes an array of bytes to the stream.
+            </summary>
+            <param name="value">The values to write</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBinaryWriter.Write(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Writes a portion of an array of bytes to the stream.
+            </summary>
+            <param name="value">An array containing the bytes to write</param>
+            <param name="offset">The index of the first byte to write within the array</param>
+            <param name="count">The number of bytes to write</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBinaryWriter.CheckDisposed">
+            <summary>
+            Checks whether the writer has been disposed, throwing an exception if so.
+            </summary>
+            <exception cref="T:System.ObjectDisposedException"></exception>
+        </member>
+        <member name="M:PNGNormalizer.EndianBinaryWriter.WriteInternal(System.Byte[],System.Int32)">
+            <summary>
+            Writes the specified number of bytes from the start of the given byte array,
+            after checking whether or not the writer has been disposed.
+            </summary>
+            <param name="bytes">The array of bytes to write from</param>
+            <param name="length">The number of bytes to write</param>
+        </member>
+        <member name="P:PNGNormalizer.EndianBinaryWriter.BitConverter">
+            <summary>
+            Gets the bit converter used to write values to the stream.
+            </summary>
+        </member>
+        <member name="P:PNGNormalizer.EndianBinaryWriter.BaseStream">
+            <summary>
+            Gets the underlying stream of the EndianBinaryWriter.
+            </summary>
+            <returns>The underlying stream associated with the EndianBinaryWriter.</returns>
+        </member>
+        <member name="T:PNGNormalizer.EndianBitConverter">
+            <summary>
+            Converts base data types to an array of bytes, and an array of bytes to base data types.
+            Unlike <see cref="T:System.BitConverter"/>, this class supports Big- and Little-Endian.
+            </summary>
+        </member>
+        <member name="F:PNGNormalizer.EndianBitConverter.BigEndianConverter">
+            <summary>
+            Gets a converter with support for Big-Endian.
+            </summary>
+        </member>
+        <member name="F:PNGNormalizer.EndianBitConverter.LittleEndianConverter">
+            <summary>
+            Gets a converter with support for LIttle-Endian.
+            </summary>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.GetConverter(PNGNormalizer.Endianness)">
+            <summary>
+            Factory method for obtaining a converter for the specified "endianess".
+            </summary>
+            <param name="endianness">The endianness.</param>
+            <returns></returns>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.DoubleToInt64Bits(System.Double)">
+            <summary>
+            Converts the specified double-precision floating point number to a 
+            64-bit signed integer. Note: the endianness of this converter does not
+            affect the returned value.
+            </summary>
+            <param name="value">The number to convert. </param>
+            <returns>A 64-bit signed integer whose value is equivalent to value.</returns>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.Int64BitsToDouble(System.Int64)">
+            <summary>
+            Converts the specified 64-bit signed integer to a double-precision 
+            floating point number. Note: the endianness of this converter does not
+            affect the returned value.
+            </summary>
+            <param name="value">The number to convert. </param>
+            <returns>A double-precision floating point number whose value is equivalent to value.</returns>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.SingleToInt32Bits(System.Single)">
+            <summary>
+            Converts the specified single-precision floating point number to a 
+            32-bit signed integer. Note: the endianness of this converter does not
+            affect the returned value.
+            </summary>
+            <param name="value">The number to convert. </param>
+            <returns>A 32-bit signed integer whose value is equivalent to value.</returns>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.Int32BitsToSingle(System.Int32)">
+            <summary>
+            Converts the specified 32-bit signed integer to a single-precision floating point 
+            number. Note: the endianness of this converter does not
+            affect the returned value.
+            </summary>
+            <param name="value">The number to convert. </param>
+            <returns>A single-precision floating point number whose value is equivalent to value.</returns>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.ToBoolean(System.Byte[],System.Int32)">
+            <summary>
+            Returns a Boolean value converted from one byte at a specified position in a byte array.
+            </summary>
+            <param name="value">An array of bytes.</param>
+            <param name="startIndex">The starting position within value.</param>
+            <returns>true if the byte at startIndex in value is nonzero; otherwise, false.</returns>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.ToChar(System.Byte[],System.Int32)">
+            <summary>
+            Returns a Unicode character converted from two bytes at a specified position in a byte array.
+            </summary>
+            <param name="value">An array of bytes.</param>
+            <param name="startIndex">The starting position within value.</param>
+            <returns>A character formed by two bytes beginning at startIndex.</returns>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.ToDouble(System.Byte[],System.Int32)">
+            <summary>
+            Returns a double-precision floating point number converted from eight bytes 
+            at a specified position in a byte array.
+            </summary>
+            <param name="value">An array of bytes.</param>
+            <param name="startIndex">The starting position within value.</param>
+            <returns>A double precision floating point number formed by eight bytes beginning at startIndex.</returns>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.ToSingle(System.Byte[],System.Int32)">
+            <summary>
+            Returns a single-precision floating point number converted from four bytes 
+            at a specified position in a byte array.
+            </summary>
+            <param name="value">An array of bytes.</param>
+            <param name="startIndex">The starting position within value.</param>
+            <returns>A single precision floating point number formed by four bytes beginning at startIndex.</returns>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.ToInt16(System.Byte[],System.Int32)">
+            <summary>
+            Returns a 16-bit signed integer converted from two bytes at a specified position in a byte array.
+            </summary>
+            <param name="value">An array of bytes.</param>
+            <param name="startIndex">The starting position within value.</param>
+            <returns>A 16-bit signed integer formed by two bytes beginning at startIndex.</returns>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.ToInt32(System.Byte[],System.Int32)">
+            <summary>
+            Returns a 32-bit signed integer converted from four bytes at a specified position in a byte array.
+            </summary>
+            <param name="value">An array of bytes.</param>
+            <param name="startIndex">The starting position within value.</param>
+            <returns>A 16-bit signed integer formed by four bytes beginning at startIndex.</returns>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.ToInt64(System.Byte[],System.Int32)">
+            <summary>
+            Returns a 64-bit signed integer converted from eight bytes at a specified position in a byte array.
+            </summary>
+            <param name="value">An array of bytes.</param>
+            <param name="startIndex">The starting position within value.</param>
+            <returns>A 64-bit signed integer formed by eight bytes beginning at startIndex.</returns>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.ToUInt16(System.Byte[],System.Int32)">
+            <summary>
+            Returns a 16-bit unsigned integer converted from two bytes at a specified position in a byte array.
+            </summary>
+            <param name="value">An array of bytes.</param>
+            <param name="startIndex">The starting position within value.</param>
+            <returns>A 16-bit unsigned integer formed by two bytes beginning at startIndex.</returns>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.ToUInt32(System.Byte[],System.Int32)">
+            <summary>
+            Returns a 32-bit unsigned integer converted from four bytes at a specified position in a byte array.
+            </summary>
+            <param name="value">An array of bytes.</param>
+            <param name="startIndex">The starting position within value.</param>
+            <returns>A 16-bit unsigned integer formed by four bytes beginning at startIndex.</returns>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.ToUInt64(System.Byte[],System.Int32)">
+            <summary>
+            Returns a 64-bit unsigned integer converted from eight bytes at a specified position in a byte array.
+            </summary>
+            <param name="value">An array of bytes.</param>
+            <param name="startIndex">The starting position within value.</param>
+            <returns>A 64-bit unsigned integer formed by eight bytes beginning at startIndex.</returns>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.CheckByteArgument(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Checks the given argument for validity.
+            </summary>
+            <param name="value">The byte array passed in</param>
+            <param name="startIndex">The start index passed in</param>
+            <param name="bytesRequired">The number of bytes required</param>
+            <exception cref="T:System.ArgumentNullException">value is a null reference</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+            startIndex is less than zero or greater than the length of value minus bytesRequired.
+            </exception>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.CheckedFromBytes(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Checks the arguments for validity before calling FromBytes
+            (which can therefore assume the arguments are valid).
+            </summary>
+            <param name="value">The bytes to convert after checking</param>
+            <param name="startIndex">The index of the first byte to convert</param>
+            <param name="bytesToConvert">The number of bytes to convert</param>
+            <returns></returns>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.FromBytes(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Convert the given number of bytes from the given array, from the given start
+            position, into a long, using the bytes as the least significant part of the long.
+            By the time this is called, the arguments have been checked for validity.
+            </summary>
+            <param name="value">The bytes to convert</param>
+            <param name="startIndex">The index of the first byte to convert</param>
+            <param name="bytesToConvert">The number of bytes to use in the conversion</param>
+            <returns>The converted number</returns>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.CopyBytes(System.Decimal,System.Byte[],System.Int32)">
+            <summary>
+            Copies the specified decimal value into the specified byte array,
+            beginning at the specified index.
+            </summary>
+            <param name="value">A character to convert.</param>
+            <param name="buffer">The byte array to copy the bytes into</param>
+            <param name="index">The first index into the array to copy the bytes into</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.GetBytes(System.Int64,System.Int32)">
+            <summary>
+            Returns an array with the given number of bytes formed
+            from the least significant bytes of the specified value.
+            This is used to implement the other GetBytes methods.
+            </summary>
+            <param name="value">The value to get bytes for</param>
+            <param name="bytes">The number of significant bytes to return</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.GetBytes(System.UInt32)">
+            <summary>
+            Gets the byte array for the specified <see cref="T:System.UInt32"/>, based on the current "endianess".
+            </summary>
+            <param name="value">The value.</param>
+            <returns></returns>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.CopyBytes(System.Int64,System.Int32,System.Byte[],System.Int32)">
+            <summary>
+            Copies the given number of bytes from the least-specific
+            end of the specified value into the specified byte array, beginning
+            at the specified index.
+            This is used to implement the other CopyBytes methods.
+            </summary>
+            <param name="value">The value to copy bytes for</param>
+            <param name="bytes">The number of significant bytes to copy</param>
+            <param name="buffer">The byte array to copy the bytes into</param>
+            <param name="index">The first index into the array to copy the bytes into</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.CopyBytesImpl(System.Int64,System.Int32,System.Byte[],System.Int32)">
+            <summary>
+            Copies the given number of bytes from the least-specific
+            end of the specified value into the specified byte array, beginning
+            at the specified index.
+            This must be implemented in concrete derived classes, but the implementation
+            may assume that the value will fit into the buffer.
+            </summary>
+            <param name="value">The value to copy bytes for</param>
+            <param name="bytes">The number of significant bytes to copy</param>
+            <param name="buffer">The byte array to copy the bytes into</param>
+            <param name="index">The first index into the array to copy the bytes into</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.CopyBytes(System.Boolean,System.Byte[],System.Int32)">
+            <summary>
+            Copies the specified Boolean value into the specified byte array,
+            beginning at the specified index.
+            </summary>
+            <param name="value">A Boolean value.</param>
+            <param name="buffer">The byte array to copy the bytes into</param>
+            <param name="index">The first index into the array to copy the bytes into</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.CopyBytes(System.Char,System.Byte[],System.Int32)">
+            <summary>
+            Copies the specified Unicode character value into the specified byte array,
+            beginning at the specified index.
+            </summary>
+            <param name="value">A character to convert.</param>
+            <param name="buffer">The byte array to copy the bytes into</param>
+            <param name="index">The first index into the array to copy the bytes into</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.CopyBytes(System.Double,System.Byte[],System.Int32)">
+            <summary>
+            Copies the specified double-precision floating point value into the specified byte array,
+            beginning at the specified index.
+            </summary>
+            <param name="value">The number to convert.</param>
+            <param name="buffer">The byte array to copy the bytes into</param>
+            <param name="index">The first index into the array to copy the bytes into</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.CopyBytes(System.Int16,System.Byte[],System.Int32)">
+            <summary>
+            Copies the specified 16-bit signed integer value into the specified byte array,
+            beginning at the specified index.
+            </summary>
+            <param name="value">The number to convert.</param>
+            <param name="buffer">The byte array to copy the bytes into</param>
+            <param name="index">The first index into the array to copy the bytes into</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.CopyBytes(System.Int32,System.Byte[],System.Int32)">
+            <summary>
+            Copies the specified 32-bit signed integer value into the specified byte array,
+            beginning at the specified index.
+            </summary>
+            <param name="value">The number to convert.</param>
+            <param name="buffer">The byte array to copy the bytes into</param>
+            <param name="index">The first index into the array to copy the bytes into</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.CopyBytes(System.Int64,System.Byte[],System.Int32)">
+            <summary>
+            Copies the specified 64-bit signed integer value into the specified byte array,
+            beginning at the specified index.
+            </summary>
+            <param name="value">The number to convert.</param>
+            <param name="buffer">The byte array to copy the bytes into</param>
+            <param name="index">The first index into the array to copy the bytes into</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.CopyBytes(System.Single,System.Byte[],System.Int32)">
+            <summary>
+            Copies the specified single-precision floating point value into the specified byte array,
+            beginning at the specified index.
+            </summary>
+            <param name="value">The number to convert.</param>
+            <param name="buffer">The byte array to copy the bytes into</param>
+            <param name="index">The first index into the array to copy the bytes into</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.CopyBytes(System.UInt16,System.Byte[],System.Int32)">
+            <summary>
+            Copies the specified 16-bit unsigned integer value into the specified byte array,
+            beginning at the specified index.
+            </summary>
+            <param name="value">The number to convert.</param>
+            <param name="buffer">The byte array to copy the bytes into</param>
+            <param name="index">The first index into the array to copy the bytes into</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.CopyBytes(System.UInt32,System.Byte[],System.Int32)">
+            <summary>
+            Copies the specified 32-bit unsigned integer value into the specified byte array,
+            beginning at the specified index.
+            </summary>
+            <param name="value">The number to convert.</param>
+            <param name="buffer">The byte array to copy the bytes into</param>
+            <param name="index">The first index into the array to copy the bytes into</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.CopyBytes(System.UInt64,System.Byte[],System.Int32)">
+            <summary>
+            Copies the specified 64-bit unsigned integer value into the specified byte array,
+            beginning at the specified index.
+            </summary>
+            <param name="value">The number to convert.</param>
+            <param name="buffer">The byte array to copy the bytes into</param>
+            <param name="index">The first index into the array to copy the bytes into</param>
+        </member>
+        <member name="P:PNGNormalizer.EndianBitConverter.IsLittleEndian">
+            <summary>
+            Indicates the byte order ("endianess") in which data is converted using this class.
+            </summary>
+        </member>
+        <member name="P:PNGNormalizer.EndianBitConverter.Endianness">
+            <summary>
+            The "endianess" of this instance.
+            </summary>
+        </member>
+        <member name="T:PNGNormalizer.EndianBitConverter.Int32SingleUnion">
+            <summary>
+            Union used solely for the equivalent of DoubleToInt64Bits and vice versa.
+            </summary>
+        </member>
+        <member name="F:PNGNormalizer.EndianBitConverter.Int32SingleUnion.i">
+            <summary>
+            Int32 version of the value.
+            </summary>
+        </member>
+        <member name="F:PNGNormalizer.EndianBitConverter.Int32SingleUnion.f">
+            <summary>
+            Single version of the value.
+            </summary>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.Int32SingleUnion.#ctor(System.Int32)">
+            <summary>
+            Creates an instance representing the given integer.
+            </summary>
+            <param name="i">The integer value of the new instance.</param>
+        </member>
+        <member name="M:PNGNormalizer.EndianBitConverter.Int32SingleUnion.#ctor(System.Single)">
+            <summary>
+            Creates an instance representing the given floating point number.
+            </summary>
+            <param name="f">The floating point value of the new instance.</param>
+        </member>
+        <member name="P:PNGNormalizer.EndianBitConverter.Int32SingleUnion.AsInt32">
+            <summary>
+            Returns the value of the instance as an integer.
+            </summary>
+        </member>
+        <member name="P:PNGNormalizer.EndianBitConverter.Int32SingleUnion.AsSingle">
+            <summary>
+            Returns the value of the instance as a floating point number.
+            </summary>
+        </member>
+        <member name="M:PNGNormalizer.BigEndianBitConverter.CopyBytesImpl(System.Int64,System.Int32,System.Byte[],System.Int32)">
+            <summary>
+            Copies the specified number of bytes from value to buffer, starting at index.
+            </summary>
+            <param name="value">The value to copy</param>
+            <param name="bytes">The number of bytes to copy</param>
+            <param name="buffer">The buffer to copy the bytes into</param>
+            <param name="index">The index to start at</param>
+        </member>
+        <member name="M:PNGNormalizer.BigEndianBitConverter.FromBytes(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Returns a value built from the specified number of bytes from the given buffer,
+            starting at index.
+            </summary>
+            <param name="buffer">The data in byte array format</param>
+            <param name="startIndex">The first index to use</param>
+            <param name="bytesToConvert">The number of bytes to use</param>
+            <returns>The value built from the given bytes</returns>
+        </member>
+        <member name="T:PNGNormalizer.StreamExtensions">
+            <summary>
+            Provides extension methods to <see cref="T:System.IO.Stream"/>, byte arrays, and <see cref="T:System.IO.BinaryReader"/>.
+            </summary>
+        </member>
+        <member name="M:PNGNormalizer.StreamExtensions.ReadBigEndianUInt32(System.Byte[],System.Int32)">
+            <summary>
+            Reads a Big-Endian <see cref="T:System.UInt32"/> from the byte array.
+            </summary>
+            <param name="bytes">The byte array from which to read the UInt32.</param>
+            <param name="startIndex">The zero-based starting position of the UInt32 in this instance.</param>
+            <returns></returns>
+        </member>
+        <member name="M:PNGNormalizer.StreamExtensions.ReadBigEndianUInt32(System.IO.BinaryReader)">
+            <summary>
+            Reads a Big-Endian <see cref="T:System.UInt32"/> from the byte array.
+            </summary>
+            <param name="binaryReader">The <see cref="T:System.IO.BinaryReader"/> from which to read a UInt32</param>
+            <returns></returns>
+        </member>
+        <member name="M:PNGNormalizer.StreamExtensions.Take(System.Byte[],System.Int32,System.Int64)">
+            <summary>
+            Retrieves a subset array of bytes from this instance.
+            </summary>
+            <param name="source">The source array from which to .</param>
+            <param name="length">The number of bytes in the subset array.</param>
+            <param name="startOffset">The zero-based starting position of a subset array in this instance.</param>
+            <returns></returns>
+        </member>
+        <member name="M:PNGNormalizer.StreamExtensions.WriteBytes(System.IO.Stream,System.Byte[])">
+            <summary>
+            Writes an arbitrary number of bytes to the stream, instead of creating an for them or calling Write multiple times.
+            </summary>
+            <param name="stream">The stream.</param>
+            <param name="args">A byte array that contains zero or more bytes to write to the stream.</param>
+        </member>
+        <member name="M:PNGNormalizer.LittleEndianConverter.CopyBytesImpl(System.Int64,System.Int32,System.Byte[],System.Int32)">
+            <summary>
+            Copies the specified number of bytes from value to buffer, starting at index.
+            </summary>
+            <param name="value">The value to copy</param>
+            <param name="bytes">The number of bytes to copy</param>
+            <param name="buffer">The buffer to copy the bytes into</param>
+            <param name="index">The index to start at</param>
+        </member>
+        <member name="M:PNGNormalizer.LittleEndianConverter.FromBytes(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Returns a value built from the specified number of bytes from the given buffer,
+            starting at index.
+            </summary>
+            <param name="buffer">The data in byte array format</param>
+            <param name="startIndex">The first index to use</param>
+            <param name="bytesToConvert">The number of bytes to use</param>
+            <returns>The value built from the given bytes</returns>
+        </member>
+    </members>
+</doc>

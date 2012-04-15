@@ -70,7 +70,6 @@ namespace CorporateAppStore.Controllers
             if (ImageHelper.GetImageFormat(icon.Data) == ImageFormat.Png)
             {
                 contentType = MimeTypes.ImagePng;
-                
                 var png = new PngFile(icon.Data);
                 iconBinaryContents = png.Data;
             } else

@@ -44,6 +44,9 @@
     <Reference Include="PList">
       <HintPath>..\packages\plist.net.1.0\lib\Net35\PList.dll</HintPath>
     </Reference>
+    <Reference Include="PNGNormalizer">
+      <HintPath>..\lib\PNGNormalizer.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Web.WebPages, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
@@ -138,12 +141,6 @@
   <ItemGroup>
     <Folder Include="App_Code\" />
     <Folder Include="App_Data\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\PNGNormalizer\PNGNormalizer.csproj">
-      <Project>{FBEC14BC-BD39-4CAB-9DA2-127AAC34B497}</Project>
-      <Name>PNGNormalizer</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

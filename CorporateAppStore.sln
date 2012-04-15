@@ -5,8 +5,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorporateAppStore", "Corpor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorporateAppStore.Tests", "CorporateAppStore.Tests\CorporateAppStore.Tests.csproj", "{EED3DBFC-005F-440C-9315-88DB30D91C7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PNGNormalizer", "PNGNormalizer\PNGNormalizer.csproj", "{FBEC14BC-BD39-4CAB-9DA2-127AAC34B497}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,10 +19,6 @@ Global
 		{EED3DBFC-005F-440C-9315-88DB30D91C7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EED3DBFC-005F-440C-9315-88DB30D91C7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EED3DBFC-005F-440C-9315-88DB30D91C7C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FBEC14BC-BD39-4CAB-9DA2-127AAC34B497}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FBEC14BC-BD39-4CAB-9DA2-127AAC34B497}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FBEC14BC-BD39-4CAB-9DA2-127AAC34B497}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FBEC14BC-BD39-4CAB-9DA2-127AAC34B497}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
