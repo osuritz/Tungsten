@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using CorporateAppStore.Models;
 using CorporateAppStore.Helpers;
+using PNGNormalizer;
 
 namespace CorporateAppStore.Controllers
 {
@@ -64,9 +65,21 @@ namespace CorporateAppStore.Controllers
                 return this.HttpNotFound();
             }
 
-            var png = new PngFile(icon.Data);
+            byte[] iconBinaryContents;
+            string contentType;
+            if (ImageHelper.GetImageFormat(icon.Data) == ImageFormat.Png)
+            {
+                contentType = MimeTypes.ImagePng;
+                
+                var png = new PngFile(icon.Data);
+                iconBinaryContents = png.Data;
+            } else
+            {
+                iconBinaryContents = null;
+                contentType = MimeTypes.GetMimeType(icon.Filename);
+            }
 
-            return this.File(icon.Data, MimeTypes.GetMimeType(icon.Filename));
+            return this.File(iconBinaryContents, contentType);
         }
     }
 }
